@@ -112,7 +112,7 @@ shadowsocks_conf(){
     "password":"GLOBALSSH",
     "timeout":600,
     "method":"chacha20-ietf-poly1305",
-	"fast_open":false,
+	"fast_open":true,
 	"nameserver":"1.1.1.1",
 	"reuse_port":true,
 	"no_delay":true,
