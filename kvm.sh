@@ -418,6 +418,7 @@ while :
   done
 END2
 
+
 #automatic check trash
 cat > /usr/local/bin/expiredtrash <<END3
 #!/bin/bash
