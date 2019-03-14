@@ -237,24 +237,24 @@ config_systemctl(){
 	sysctl vm.vfs_cache_pressure=50
 	swapon -s
 	echo 'vm.vfs_cache_pressure = 50
-	vm.swappiness= 40
-	fs.file-max = 51200
-	net.core.rmem_max = 67108864
-	net.core.wmem_max = 67108864
-	net.core.netdev_max_backlog = 250000
-	net.core.somaxconn = 4096
-	net.ipv4.tcp_syncookies = 1
-	net.ipv4.tcp_tw_reuse = 1
-	net.ipv4.tcp_fin_timeout = 30
-	net.ipv4.tcp_keepalive_time = 1200
-	net.ipv4.ip_local_port_range = 10000 65000
-	net.ipv4.tcp_max_syn_backlog = 8192
-	net.ipv4.tcp_max_tw_buckets = 5000
-	net.ipv4.tcp_fastopen = 3
-	net.ipv4.tcp_mem = 25600 51200 102400
-	net.ipv4.tcp_rmem = 4096 87380 67108864
-	net.ipv4.tcp_wmem = 4096 65536 67108864
-	net.ipv4.tcp_mtu_probing = 1' >> /etc/sysctl.conf
+vm.swappiness= 40
+fs.file-max = 51200
+net.core.rmem_max = 67108864
+net.core.wmem_max = 67108864
+net.core.netdev_max_backlog = 250000
+net.core.somaxconn = 4096
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_keepalive_time = 1200
+net.ipv4.ip_local_port_range = 10000 65000
+net.ipv4.tcp_max_syn_backlog = 8192
+net.ipv4.tcp_max_tw_buckets = 5000
+net.ipv4.tcp_fastopen = 3
+net.ipv4.tcp_mem = 25600 51200 102400
+net.ipv4.tcp_rmem = 4096 87380 67108864
+net.ipv4.tcp_wmem = 4096 65536 67108864
+net.ipv4.tcp_mtu_probing = 1' >> /etc/sysctl.conf
 	sysctl --system
 	sysctl -p
 	sysctl -p /etc/sysctl.d/local.conf
@@ -343,10 +343,12 @@ install_squid3(){
 }
 
 config_firewall(){
+	NIC=$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)
 	iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
 	iptables -I INPUT -p tcp --dport 3128 -j ACCEPT
-	iptables -t nat -I POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
-	iptables -t nat -I POSTROUTING -s 10.9.0.0/24 -o eth0 -j MASQUERADE
+	iptables -I FORWARD -s 10.9.0.0/24 -j ACCEPT
+	iptables -I INPUT -p udp --dport 587 -j ACCEPT
+	iptables -t nat -I POSTROUTING -s 10.9.0.0/24 -o $NIC -j MASQUERADE
 	iptables-save
 	clear
 	apt-get -y install iptables-persistent
@@ -354,9 +356,6 @@ config_firewall(){
 }
 
 config_autostartup(){
-	echo "iptables -I FORWARD -s 10.9.0.0/24 -j ACCEPT
-iptables -I INPUT -p udp --dport 587 -j ACCEPT
-iptables -t nat -A POSTROUTING -s 10.9.0.0/24 ! -d 10.9.0.0/24 -j SNAT --to $MYIP" >> /etc/rc.local
 	sed -i '$ i\screen -AmdS limit /root/limit.sh' /etc/rc.local
 	sed -i '$ i\screen -AmdS ban /root/ban.sh' /etc/rc.local
 	sed -i '$ i\service fail2ban restart' /etc/rc.local
@@ -549,7 +548,6 @@ log_file(){
 	echo "--------------------------------------------------------------------------------"  | tee -a log-install.txt
 	echo ""  | tee -a log-install.txt
 	echo "Informasi Server"  | tee -a log-install.txt
-	echo "Details Log Client shadowsocks : http://$MYIP:81/shadowsocks-client.txt"  | tee -a log-install.txt
 	echo "Download Client tcp OVPN: http://$MYIP:81/tcp-$MYIP.ovpn"
 	echo "Download Client tcp OVPN: http://$MYIP:81/udp-$MYIP.ovpn"
 	echo "   - Timezone    : Asia/Jakarta (GMT +7)"  | tee -a log-install.txt
