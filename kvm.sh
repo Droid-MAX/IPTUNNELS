@@ -134,16 +134,6 @@ Restart=on-failure
 WantedBy=multi-user.target
 END8
 systemctl enable shadowsocks.service
-echo 'Congratulations, ${green}shadowsocks-libev${plain} server install completed!
-Your Server IP        : ${red} $MYIP ${plain}
-Your Server Port      : ${red} 53794 ${plain}
-Your Password         : ${red} GLOBALSSH ${plain}
-Your Encryption Method: ${red} chacha20-ietf-poly1305 ${plain}
-Your Cloaks Public Key: ${red} ${publi} ${plain}
-Your Cloaks Private Key: ${red} ${privat} ${plain}
-Your Cloaks AdminUID: ${red} ${admuid} ${plain}
-Download Plugin Cloak PC : https://api.github.com/repos/cbeuw/Cloak/releases/latest
-Download Plugin Cloak Android: https://github.com/cbeuw/Cloak-android/releases' >> /var/www/html/shadowsocks-client.txt
 wget -O /etc/init.d/shadowsocks "https://github.com/malikshi/IPTUNNELS/raw/master/config/shadowsocks"
 chmod +x /etc/init.d/shadowsocks
 }
@@ -364,9 +354,9 @@ config_firewall(){
 }
 
 config_autostartup(){
-	echo '\iptables -I FORWARD -s 10.9.0.0/24 -j ACCEPT
+	echo "iptables -I FORWARD -s 10.9.0.0/24 -j ACCEPT
 iptables -I INPUT -p udp --dport 587 -j ACCEPT
-iptables -t nat -A POSTROUTING -s 10.9.0.0/24 ! -d 10.9.0.0/24 -j SNAT --to $MYIP' >> /etc/rc.local
+iptables -t nat -A POSTROUTING -s 10.9.0.0/24 ! -d 10.9.0.0/24 -j SNAT --to $MYIP" >> /etc/rc.local
 	sed -i '$ i\screen -AmdS limit /root/limit.sh' /etc/rc.local
 	sed -i '$ i\screen -AmdS ban /root/ban.sh' /etc/rc.local
 	sed -i '$ i\service fail2ban restart' /etc/rc.local
@@ -586,6 +576,8 @@ log_file(){
 	echo -e "Your Cloak's Public Key: ${red} ${publi} ${plain}"  | tee -a log-install.txt
 	echo -e "Your Cloak's Private Key: ${red} ${privat} ${plain}"  | tee -a log-install.txt
 	echo -e "Your Cloak's AdminUID: ${red} ${admuid} ${plain}"  | tee -a log-install.txt
+	echo -e "Download Plugin Cloak PC : https://api.github.com/repos/cbeuw/Cloak/releases/latest"  | tee -a log-install.txt
+	echo -e "Download Plugin Cloak Android: https://github.com/cbeuw/Cloak-android/releases"  | tee -a log-install.txt
 	echo "Informasi Tools Dalam Server"  | tee -a log-install.txt
 	echo "   - htop"  | tee -a log-install.txt
 	echo "   - iftop"  | tee -a log-install.txt
@@ -604,6 +596,7 @@ log_file(){
 	echo "     NB: User & Password Webmin adalah sama dengan user & password root"  | tee -a log-install.txt
 	echo ""  | tee -a log-install.txt
 	echo "            Modified by https://www.facebook.com/ibnumalik.al                 "  | tee -a log-install.txt
+	cp /root/log-install.txt /var/www/html/
 }
 exit_all(){
 	exit 0;
@@ -620,6 +613,7 @@ install_cloak
 generate_credentials
 install_prepare_cloak
 shadowsocks_conf
+Install_monit_shadowsocks
 install_ovpn
 install_screenfetch
 config_systemctl
