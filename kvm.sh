@@ -548,8 +548,9 @@ log_file(){
 	echo "--------------------------------------------------------------------------------"  | tee -a log-install.txt
 	echo ""  | tee -a log-install.txt
 	echo "Informasi Server"  | tee -a log-install.txt
-	echo "Download Client tcp OVPN: http://$MYIP:81/tcp-$MYIP.ovpn"
-	echo "Download Client tcp OVPN: http://$MYIP:81/udp-$MYIP.ovpn"
+	echo "http://$MYIP:81/log-install.txt"
+	echo "Download Client tcp OVPN: http://$MYIP:81/tcp-$MYIP.ovpn"  | tee -a log-install.txt
+	echo "Download Client tcp OVPN: http://$MYIP:81/udp-$MYIP.ovpn"  | tee -a log-install.txt
 	echo "   - Timezone    : Asia/Jakarta (GMT +7)"  | tee -a log-install.txt
 	echo "   - Fail2Ban    : [on]"  | tee -a log-install.txt
 	echo "   - IPtables    : [off]"  | tee -a log-install.txt
@@ -567,13 +568,13 @@ log_file(){
 	echo "   - Badvpn      : 7300"  | tee -a log-install.txt
 	echo ""  | tee -a log-install.txt
 	echo -e "Congratulations, ${green}shadowsocks-libev${plain} server install completed!"  | tee -a log-install.txt
-	echo -e "Your Server IP        : ${red} $MYIP ${plain}"  | tee -a log-install.txt
-	echo -e "Your Server Port      : ${red} 53794 ${plain}"  | tee -a log-install.txt
-	echo -e "Your Password         : ${red} GLOBALSSH ${plain}"  | tee -a log-install.txt
-	echo -e "Your Encryption Method: ${red} chacha20-ietf-poly1305 ${plain}"  | tee -a log-install.txt
-	echo -e "Your Cloak's Public Key: ${red} ${publi} ${plain}"  | tee -a log-install.txt
-	echo -e "Your Cloak's Private Key: ${red} ${privat} ${plain}"  | tee -a log-install.txt
-	echo -e "Your Cloak's AdminUID: ${red} ${admuid} ${plain}"  | tee -a log-install.txt
+	echo -e "Your Server IP        : $MYIP"  | tee -a log-install.txt
+	echo -e "Your Server Port      : 53794"  | tee -a log-install.txt
+	echo -e "Your Password         : GLOBALSSH"  | tee -a log-install.txt
+	echo -e "Your Encryption Method: chacha20-ietf-poly1305"  | tee -a log-install.txt
+	echo -e "Your Cloak's Public Key: ${publi}"  | tee -a log-install.txt
+	echo -e "Your Cloak's Private Key: ${privat}"  | tee -a log-install.txt
+	echo -e "Your Cloak's AdminUID: ${admuid}"  | tee -a log-install.txt
 	echo -e "Download Plugin Cloak PC : https://api.github.com/repos/cbeuw/Cloak/releases/latest"  | tee -a log-install.txt
 	echo -e "Download Plugin Cloak Android: https://github.com/cbeuw/Cloak-android/releases"  | tee -a log-install.txt
 	echo "Informasi Tools Dalam Server"  | tee -a log-install.txt
