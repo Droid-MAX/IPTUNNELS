@@ -59,9 +59,9 @@ install_package_dependency(){
 
 change_dns_resolver(){
 	wget -O /etc/issue.net "https://github.com/malikshi/IPTUNNELS/raw/master/config/issue.net"
-	echo "nameserver 1.1.1.1" > /etc/resolv.conf
+	echo "nameserver 1.1.1.1" >> /etc/resolv.conf
 	echo "nameserver 1.0.0.1" >> /etc/resolv.conf
-	sed -i '$ i\echo "nameserver 1.1.1.1" > /etc/resolv.conf' /etc/rc.local
+	sed -i '$ i\echo "nameserver 1.1.1.1" >> /etc/resolv.conf' /etc/rc.local
 	sed -i '$ i\echo "nameserver 1.0.0.1" >> /etc/resolv.conf' /etc/rc.local
 }
 
