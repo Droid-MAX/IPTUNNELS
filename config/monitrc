@@ -1,0 +1,24 @@
+set daemon 30
+with start delay 120
+set logfile /var/log/monit.log
+set idfile /var/lib/monit/id
+set statefile /var/lib/monit/state
+
+set httpd port 2812
+    use address localhost  # only accept connection from localhost
+    allow localhost        # allow localhost to connect to the server and
+    allow admin:monit
+
+###############################################################################
+## Includes
+###############################################################################
+##
+## It is possible to include additional configuration parts from other files or
+## directories.
+#
+#   include /etc/monit/conf.d/*
+#
+check process shadowsocks-libev with pidfile /var/run/shadowsocks-libev.pid
+	  start program = "/etc/init.d/shadowsocks start"
+	  stop program = "/etc/init.d/shadowsocks stop"
+	  if failed port 53794 then restart

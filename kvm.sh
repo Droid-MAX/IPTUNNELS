@@ -53,7 +53,7 @@ remove_unused_package_disableipv6(){
 }
 
 install_package_dependency(){
-	apt-get -y install wget curl git nano stunnel4 zlib1g-dev zlib1g vnstat apache2 bmon iftop htop nmap axel nano traceroute dnsutils bc nethogs less screen psmisc apt-file whois ptunnel ngrep mtr git unzip rsyslog debsums rkhunter fail2ban cmake make gcc libc6-dev dropbear apache2-utils squid3 --no-install-recommends gettext build-essential autoconf libtool libpcre3-dev asciidoc xmlto libev-dev libc-ares-dev automake haveged
+	apt-get -y install wget curl monit git nano stunnel4 zlib1g-dev zlib1g vnstat apache2 bmon iftop htop nmap axel nano traceroute dnsutils bc nethogs less screen psmisc apt-file whois ptunnel ngrep mtr git unzip rsyslog debsums rkhunter fail2ban cmake make gcc libc6-dev dropbear apache2-utils squid3 --no-install-recommends gettext build-essential autoconf libtool libpcre3-dev asciidoc xmlto libev-dev libc-ares-dev automake haveged
 	apt-file update
 }
 
@@ -134,6 +134,18 @@ Restart=on-failure
 WantedBy=multi-user.target
 END8
 systemctl enable shadowsocks.service
+echo 'Congratulations, ${green}shadowsocks-libev${plain} server install completed!
+Your Server IP        : ${red} $MYIP ${plain}
+Your Server Port      : ${red} 53794 ${plain}
+Your Password         : ${red} GLOBALSSH ${plain}
+Your Encryption Method: ${red} chacha20-ietf-poly1305 ${plain}
+Your Cloaks Public Key: ${red} ${publi} ${plain}
+Your Cloaks Private Key: ${red} ${privat} ${plain}
+Your Cloaks AdminUID: ${red} ${admuid} ${plain}
+Download Plugin Cloak PC : https://api.github.com/repos/cbeuw/Cloak/releases/latest
+Download Plugin Cloak Android: https://github.com/cbeuw/Cloak-android/releases' >> /var/www/html/shadowsocks-client.txt
+wget -O /etc/init.d/shadowsocks "https://github.com/malikshi/IPTUNNELS/raw/master/config/shadowsocks"
+chmod +x /etc/init.d/shadowsocks
 }
 
 install_ovpn(){
@@ -208,6 +220,8 @@ rcvbuf 2000000' >> /etc/openvpn/client-template.txt
 	cp client.ovpn clientudp.ovpn
 	sed -i 's|tcp-client|udp|' /root/clientudp.ovpn
 	sed -i 's|1194|587|' /root/clientudp.ovpn
+	cp /root/client.ovpn /var/www/html/tcp-$MYIP.ovpn
+	cp /root/clientudp.ovpn /var/www/html/udp-$MYIP.ovpn
 }
 
 install_screenfetch(){
@@ -528,6 +542,12 @@ config_apache2(){
 install_bbr(){
 	curl -sSL https://github.com/malikshi/IPTUNNELS/raw/master/package/bbr.sh | bash
 }
+
+Install_monit_shadowsocks(){
+	wget -O /etc/monit/monitrc "https://github.com/malikshi/IPTUNNELS/raw/master/config/monitrc"
+	monit reload all
+	systemctl enable monit
+}
 log_file(){
 	clear
 	echo " "  | tee -a log-install.txt
@@ -538,6 +558,9 @@ log_file(){
 	echo "--------------------------------------------------------------------------------"  | tee -a log-install.txt
 	echo ""  | tee -a log-install.txt
 	echo "Informasi Server"  | tee -a log-install.txt
+	echo "Details Log Client shadowsocks : http://$MYIP:81/shadowsocks-client.txt"  | tee -a log-install.txt
+	echo "Download Client tcp OVPN: http://$MYIP:81/tcp-$MYIP.ovpn"
+	echo "Download Client tcp OVPN: http://$MYIP:81/udp-$MYIP.ovpn"
 	echo "   - Timezone    : Asia/Jakarta (GMT +7)"  | tee -a log-install.txt
 	echo "   - Fail2Ban    : [on]"  | tee -a log-install.txt
 	echo "   - IPtables    : [off]"  | tee -a log-install.txt
